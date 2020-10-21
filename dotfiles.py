@@ -36,7 +36,7 @@ def backup_file(home_path, backup_path, dot_file, stamp):
 		if not os.path.exists(backup_folder):
 			os.mkdir(backup_folder)
 		backup_file_path = "%s/%s" % (backup_folder, dot_file)
-		print "Backing up: %s" % backup_file_path
+		print("Backing up: %s" % backup_file_path)
 		copy_file(home_path, backup_file_path)
 
 def main():
@@ -58,7 +58,7 @@ def main():
 		backup_file(home_path, backup_path, dot_filename, stamp)
 		if os.path.exists(home_path):
 			os.system("rm -r %s" % home_path)
-		print "Generating symlinks from %s to %s" % (home_path, build_path)
+		print("Generating symlinks from %s to %s" % (home_path, build_path))
 		os.symlink(build_path, home_path)
 
 	# Installing modules

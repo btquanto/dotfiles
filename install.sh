@@ -55,13 +55,13 @@ else
     then 
         if [ $(whoami) == "root" ]
         then
-            apt-get install python-virtualenv -y;
+            apt-get install python3-virtualenv -y;
         else
             if [ "$EUID" -ne 0 ]
             then
                 if hash sudo 2> /dev/null
                 then
-                    sudo apt-get install python-virtualenv -y;
+                    sudo apt-get install python3-virtualenv -y;
                 fi;
             fi;
         fi;
@@ -84,7 +84,7 @@ fi;
 if [ ! -f ".virtual_environment/bin/activate" ];
 then
 	echo "Virtual environment not installed. Creating a new virtual environment";
-	virtualenv .virtual_environment --python=python2;
+	virtualenv .virtual_environment --python=python3;
 fi
 
 echo "Activating virtual environment";
