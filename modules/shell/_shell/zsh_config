@@ -1,0 +1,71 @@
+# ZSH Config
+
+if [[ "$_SHELL" == "zsh" ]]; then
+    bindkey -e
+    # zstyle ':completion:*' use-cache on
+    zstyle ':completion:*' menu select
+
+    setopt HIST_IGNORE_ALL_DUPS
+    setopt HIST_REDUCE_BLANKS
+    setopt SHARE_HISTORY
+    setopt HIST_FCNTL_LOCK
+    setopt HIST_LEX_WORDS
+    setopt EXTENDED_GLOB
+
+    setopt PROMPT_SUBST
+    autoload -Uz vcs_info
+
+    zstyle ':vcs_info:git:*' actionformats  '%F{8}[%F{124}%b%F{3}|%F{2}%a%F{8}]%f'
+    zstyle ':vcs_info:git:*' formats        '%F{8}[%F{124}%b%F{8}]%f'
+    zstyle ':vcs_info:*' enable git
+
+    _vcs_info_ps1() {
+        vcs_info
+        if [ -n "$vcs_info_msg_0_" ]; then
+            echo "${vcs_info_msg_0_}"
+        fi
+    }
+
+    if [[ -n $SSH_TTY || -n $SUDO_USER ]]
+    then
+        host_color="%F{yellow}"
+    else
+        host_color="%F{green}"
+    fi
+
+    if [[ $EUID == 0 ]]
+    then
+        extra_style="%K{red}%S"
+    fi
+
+    _prompt() {
+        # echo "$extra_style%B%F{magenta}[%j] %F{white}%D{%H:%M} $host_color%n@%m %F{blue}%1~ %#%f%b%s "
+        echo "$extra_style%B$host_color%n@%m%f:%F{blue}%~%b$(_vcs_info_ps1)%f\$ ";
+    }
+    export PS1='$(_prompt)';
+
+    autoload -U compinit
+    zmodload zsh/complist
+    compinit
+    _comp_options+=(globdots)                           # Include hidden files.
+
+    bindkey "^[[3~"   delete-char                       # Delete
+    bindkey "^[OH"    beginning-of-line
+    bindkey "^[[H"    beginning-of-line                 # Home
+    bindkey "^[[1~"   beginning-of-line
+    bindkey "^[[1;6D" beginning-of-line                 # Ctrl + Shift + Arrow_Left
+    bindkey "^[[4~"   end-of-line
+    bindkey "^[[F"    end-of-line                       # End
+    bindkey "^[OF"    end-of-line
+    bindkey "^[[1;6C" end-of-line                       # Ctrl + Shift + Arrow_Right
+    bindkey "^[[1;5D" backward-word                     # Ctrl + Arrow_Left
+    bindkey "^[[1;5C" forward-word                      # Ctrl + Arrow_Right
+    bindkey "^[[D"    backward-char                     # Arrow_Left
+    bindkey "^[[C"    forward-char                      # Arrow_Right
+    bindkey -s "^O"         'lf\n'                      # Ctrl + O
+    bindkey -s "^[^O"       'open .\n'                  # Ctrl + Alt + O
+
+    source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 2>/dev/null
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
+    source /usr/share/autojump/autojump.zsh 2>/dev/null
+fi
