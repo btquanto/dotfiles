@@ -53,9 +53,6 @@ cmd open ${{
 # cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
 # map r push :rename<space>
 
-# make sure trash folder exists
-%mkdir -p ~/.trash
-
 # move current file or selected files to trash folder
 # (also see 'man mv' for backup/overwrite options)
 cmd trash !{{
@@ -63,9 +60,9 @@ cmd trash !{{
     if [ -z "$fs" ]; then
         set -f
         printf "$fx\n"
-        printf "trash?[y/n]"
+        printf "trash? [y/n]"
         read ans
-        [ "$ans" = "y" ] &&  mv $fx ~/.trash/
+        [ "$ans" = "y" ] && gio trash $fx
     else
         echo "Select mode not supported."
     fi
@@ -77,7 +74,7 @@ cmd delete !{{
     if [ -z "$fs" ]; then
         set -f
         printf "$fx\n"
-        printf "delete?[y/n]"
+        printf "delete? [y/n]"
         read ans
         [ "$ans" = "y" ] && rm -rf $fx
     else
