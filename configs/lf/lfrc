@@ -58,26 +58,56 @@ cmd open ${{
 
 # move current file or selected files to trash folder
 # (also see 'man mv' for backup/overwrite options)
-cmd trash ${{
-    set -f
-    printf "$fx\n"
-    printf "trash?[y/n]"
-    read ans
-    [ "$ans" = "y" ] &&  mv $fx ~/.trash/
+cmd trash !{{
+    clear
+    if [ -z "$fs" ]; then
+        set -f
+        printf "$fx\n"
+        printf "trash?[y/n]"
+        read ans
+        [ "$ans" = "y" ] &&  mv $fx ~/.trash/
+    else
+        echo "Select mode not supported."
+    fi
 }}
 
 # define a custom 'delete' command
-cmd delete ${{
-    set -f
-    printf "$fx\n"
-    printf "delete?[y/n]"
-    read ans
-    [ "$ans" = "y" ] && rm -rf $fx
+cmd delete !{{
+    clear
+    if [ -z "$fs" ]; then
+        set -f
+        printf "$fx\n"
+        printf "delete?[y/n]"
+        read ans
+        [ "$ans" = "y" ] && rm -rf $fx
+    else
+        echo "Select mode not supported."
+    fi
 }}
 
 # use '<delete>' key for either 'trash' or 'delete' command
 map <delete> trash
+# <Ctrl> + <delete>
 map <a-d> delete
+
+# toggle
+map T toggle
+
+# show en
+cmd env !{{
+    clear
+    echo "f: $f"
+    echo "fs: \n$fs"
+    echo "fx: \n$fx"
+    echo "id: $id"
+    echo "SHELL: $SHELL"
+    echo "EDITOR: $EDITOR"
+    echo "PWD: $PWD"
+    echo "OLDPWD: $OLDPWD"
+    echo "PAGER: $PAGER"
+    echo "OPENER: $OPENER"
+    echo "LF_LEVEL: $LF_LEVEL"
+}}
 
 # extract the current file with the right command
 # (xkcd link: https://xkcd.com/1168/)
@@ -103,10 +133,22 @@ cmd tar ${{
 }}
 
 # compress current file or selected files with zip
-cmd zip ${{
+cmd zip !{{
+    clear
     set -f
-    mkdir $1
-    cp -r $fx $1
-    zip -r $1.zip $1
-    rm -rf $1
+    if [ ! -z "$fs" ]; then
+        TMP="$1.tmp"
+        mkdir -p $TMP
+        cp -r $fs $TMP
+        zip -r $1.zip $(ls -A $TMP)
+        rm -rf $TMP
+    else
+        set +u # Stop complaining about params not set
+        relative_path=$(realpath --relative-to ./ $fx)
+        filename=$(basename $fx)
+        if [ ! -z $1 ]; then
+            filename=$1
+        fi
+        zip -r $filename.zip $relative_path
+    fi
 }}
