@@ -80,14 +80,14 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
   fi
 fi
 
-# Enforcing LANG=en_US.UTF-8
-if [ -z `locale | grep -i "LANG=en_US\.UTF-8"` ]; then
-    if groups | grep "\<sudo\>" &> /dev/null; then
-        echo "sudo locale-gen en_US.UTF-8";
-        sudo locale-gen en_US.UTF-8;
-        echo "sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8";
-        sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-    fi
-fi
+# # Enforcing LANG=en_US.UTF-8
+# if [ -z `locale | grep -i "LANG=en_US\.UTF-8"` ]; then
+#     if groups | grep "\<sudo\>" &> /dev/null; then
+#         echo "sudo locale-gen en_US.UTF-8";
+#         sudo locale-gen en_US.UTF-8;
+#         echo "sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8";
+#         sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+#     fi
+# fi
 
-export LANG=en_US.UTF-8;
+# export LANG=en_US.UTF-8;

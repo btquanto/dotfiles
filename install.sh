@@ -79,6 +79,8 @@ for module in ./modules/*; do
     fi
 done
 
+mkdir -p $home_dir/.config;
+mkdir -p $home_dir/.cache;
 mkdir -p $history_dir/.config;
 
 for config in ./configs/*; do
