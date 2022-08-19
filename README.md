@@ -17,11 +17,45 @@ Copy and paste for the lazy me:
     git clone https://github.com/btquanto/dotfiles.git
     ./dotfiles/install.sh
 
+# Some optional tools you may want to install
+
+## `lf` Terminal File Manager
+
+```
+wget https://github.com/gokcehan/lf/releases/download/r27/lf-linux-amd64.tar.gz
+tar -xvf lf-linux-amd64.tar.gz
+chmod +x lf
+sudo mv lf /usr/bin/lf
+rm lf-linux-amd64.tar.gz
+```
+
+## `nala` an alternative to `apt` package manager
+
+Follow [nala's installation instructions on its wiki](https://gitlab.com/volian/nala/-/wikis/Installation)
+
+## `homebrew` [a better package manager](https://brew.sh/)
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+## `nvm` [Node Version Manager](https://github.com/nvm-sh/nvm)
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+```
+
+## `pyenv` Python version manager
+
+```
+curl https://pyenv.run | bash
+```
+
 # Local configuration
 
 Local configuration should be put in `~/.shellrc-local`. Do not put local configuration in `.shell` folder. It will be deleted after install script runs.
 
-```
+```bash
 apt() {
   command nala "$@"
 }
@@ -50,3 +84,4 @@ eval "$(pyenv init -)"
 
 eval "$(pyenv virtualenv-init -)"
 ```
+
