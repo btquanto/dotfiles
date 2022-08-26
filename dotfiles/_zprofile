@@ -2,4 +2,4 @@
 # .zprofile is only read by login shell
 # .zshrc is only read by interactive shell
 
-[ -f ~/.shell/.zshrc ] && source ~/.shell/.zshrc;
+[ -f ~/.zshrc ] && source ~/.zshrc;
