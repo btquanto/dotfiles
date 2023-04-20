@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Install dotfiles.
+"""
 
 import re
 import os
@@ -12,14 +15,21 @@ HOME_DIR=os.environ.get("HOME")
 os.chdir(ROOT_PATH)
 
 def copy(src, dest):
+    """
+    Copy a file or directory to a new location.
+    """
     if os.path.isfile(src):
-        if os.path.exists(dest): os.remove(dest)
+        if os.path.exists(dest):
+            os.remove(dest)
         shutil.copy(src, dest)
     elif os.path.isdir(src):
         shutil.rmtree(dest, ignore_errors=True)
         shutil.copytree(src, dest, dirs_exist_ok=True)
 
 def main():
+    """
+    Main function.
+    """
     timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     history_dir = os.path.join("history", timestamp)
     os.makedirs(history_dir, exist_ok=True)
@@ -43,7 +53,7 @@ def main():
                 history_path = os.path.join(history_dir, dot_name)
                 copy(home_path, history_path)
                 copy(template_path, home_path)
-        
+
     for module in os.listdir("configs"):
         template_path = os.path.join("configs", module)
         home_path = os.path.join(HOME_DIR, ".config", module)
