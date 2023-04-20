@@ -3,7 +3,6 @@
 Install dotfiles.
 """
 
-import re
 import os
 import shutil
 from datetime import datetime
@@ -34,32 +33,29 @@ def main():
     history_dir = os.path.join("history", timestamp)
     os.makedirs(history_dir, exist_ok=True)
 
-    pattern = re.compile(r"^(_)")
     for path in os.listdir("dotfiles"):
-        template_path = os.path.join("dotfiles", path)
-        dot_name = pattern.sub(".", path)
-        home_path = os.path.join(HOME_DIR, dot_name)
-        history_path = os.path.join(history_dir, dot_name)
+        file_path = os.path.join("dotfiles", path)
+        home_path = os.path.join(HOME_DIR, path)
+        history_path = os.path.join(history_dir, path)
         copy(home_path, history_path)
-        copy(template_path, home_path)
+        copy(file_path, home_path)
 
     for module in os.listdir("modules"):
         module = os.path.join("modules", module)
         if os.path.isdir(module):
             for path in os.listdir(module):
-                template_path = os.path.join(module, path)
-                dot_name = pattern.sub(".", path)
-                home_path = os.path.join(HOME_DIR, dot_name)
-                history_path = os.path.join(history_dir, dot_name)
+                file_path = os.path.join(module, path)
+                home_path = os.path.join(HOME_DIR, path)
+                history_path = os.path.join(history_dir, path)
                 copy(home_path, history_path)
-                copy(template_path, home_path)
+                copy(file_path, home_path)
 
-    for module in os.listdir("configs"):
-        template_path = os.path.join("configs", module)
-        home_path = os.path.join(HOME_DIR, ".config", module)
-        history_path = os.path.join(history_dir, ".config", module)
+    for config in os.listdir("configs"):
+        file_path = os.path.join("configs", config)
+        home_path = os.path.join(HOME_DIR, ".config", config)
+        history_path = os.path.join(history_dir, ".config", config)
         copy(home_path, history_path)
-        copy(template_path, home_path)
+        copy(file_path, home_path)
 
 if __name__ == "__main__":
     main()
