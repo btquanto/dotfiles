@@ -63,3 +63,24 @@ function extract () {
     echo "'$1' is not a valid file"
   fi
 }
+
+function path_add () {
+  # Extra paths
+  # PATH_EXTRAS="/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin"
+  PATH_EXTRAS="$1"
+  PATHS=""
+  for pth in $(echo $(echo "$PATH:$PATH_EXTRAS" | sed 's/:/\n/g')); do
+      if [ -d $pth ]; then
+          pth=$(realpath "$pth")
+          echo ":${PATHS}:" | grep --quiet ":${pth}:" || {
+              if [ -z "$PATHS" ]; then
+                  PATHS="$pth";
+              else
+                  PATHS="${PATHS}:${pth}";
+              fi
+          }
+      fi
+  done
+
+  export PATH="$PATHS";
+}

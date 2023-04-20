@@ -14,8 +14,8 @@
     pager = vim -c 'set nonumber buftype=nofile' -
 	editor = vim
 [user]
-	name = $GIT_USER
-	email = $GIT_EMAIL
+	name = 
+	email = 
 [credential]
 	helper = cache --timeout=7200
 [difftool]

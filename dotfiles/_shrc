@@ -15,11 +15,28 @@ alias locate='locate --basename --existing'
 alias screen="screen -DR"
 alias cd="my_cd"
 
-path_extras="/sbin /usr/sbin /usr/local/sbin $HOME/bin"
-for extra in $(echo $path_extras)
-    do
-    test -d $extra && test ":$PATH:" != "*:$extra:*" && PATH="$extra:$PATH"
-done
+path_add () {
+  # Extra paths
+  # PATH_EXTRAS="/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin"
+  path_extras="$1"
+  paths=""
+  for pth in $(echo $(echo "$PATH:$path_extras" | sed 's/:/\n/g')); do
+      if [ -d $pth ]; then
+          pth=$(realpath "$pth")
+          echo ":${paths}:" | grep --quiet ":${pth}:" || {
+              if [ -z "$paths" ]; then
+                  paths="$pth";
+              else
+                  paths="${paths}:${pth}";
+              fi
+          }
+      fi
+  done
+
+  export PATH="$PATHS";
+}
+
+path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
 
 cd_ls() {
     "cd" "$@" && ls

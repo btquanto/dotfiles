@@ -91,3 +91,23 @@ fi
 # fi
 
 # export LANG=en_US.UTF-8;
+
+# Extra paths
+path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
+
+# Configure git user and email if not available
+type git 2>&1 >/dev/null && {
+    git config --global --get user.name 2>&1 >/dev/null;
+    if [[ $(git config --global --get user.name) == "" ]]; then
+        printf "Git user: ";
+        read -r GIT_USER;
+        git config --global user.name "$GIT_USER";
+        unset GIT_USER;
+    fi
+    if [[ $(git config --global --get user.email) == "" ]]; then
+        printf "Git email: ";
+        read GIT_EMAIL;
+        git config --global user.email "$GIT_EMAIL";
+        unset GIT_EMAIL;
+    fi
+}
