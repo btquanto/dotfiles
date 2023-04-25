@@ -272,7 +272,6 @@ __git_ps1_colorize_gitstring ()
 # In this mode you can request colored hints using GIT_PS1_SHOWCOLORHINTS=true
 __git_ps1 ()
 {
-	echo "__git_ps1";
 	local pcmode=no
 	local detached=no
 	local ps1pc_start='\u@\h:\w '
