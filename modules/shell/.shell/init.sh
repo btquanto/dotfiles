@@ -50,32 +50,34 @@ export HISTFILE="$HOME/.cache/history";
 # Unset variables
 unset color_prompt force_color_prompt
 
-# SSH agent
-SSH_ENV="$HOME/.cache/.ssh_environment"
+if [ -f "/usr/bin/ssh-add" ]; then
+  # SSH agent
+  SSH_ENV="$HOME/.cache/.ssh_environment"
 
-function start_agent {
-    echo "Initialising new SSH agent..."
-    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
-    chmod 600 "${SSH_ENV}"
-    . "${SSH_ENV}" > /dev/null
-    /usr/bin/ssh-add;
-}
+  function start_agent {
+      echo "Initialising new SSH agent..."
+      /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+      chmod 600 "${SSH_ENV}"
+      . "${SSH_ENV}" > /dev/null
+      /usr/bin/ssh-add;
+  }
 
-# Source SSH settings, if applicable
+  # Source SSH settings, if applicable
 
-if [ -f "${SSH_ENV}" ]; then
-    . "${SSH_ENV}" > /dev/null
-    #ps ${SSH_AGENT_PID} doesn't work under cywgin
-    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || start_agent;
-else
-    start_agent;
-fi
+  if [ -f "${SSH_ENV}" ]; then
+      . "${SSH_ENV}" > /dev/null
+      #ps ${SSH_AGENT_PID} doesn't work under cywgin
+      ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || start_agent;
+  else
+      start_agent;
+  fi
 
-# Automatically start attach tmux session when accessing with ssh
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-  if [[ "$TERM" != screen* ]]; then
-    if type mux &> /dev/null; then
-      mux;
+  # Automatically start attach tmux session when accessing with ssh
+  if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    if [[ "$TERM" != screen* ]]; then
+      if type mux &> /dev/null; then
+        mux;
+      fi
     fi
   fi
 fi
