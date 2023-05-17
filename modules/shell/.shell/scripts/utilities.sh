@@ -72,7 +72,7 @@ function path_add () {
   for pth in $(echo $(echo "$PATH:$PATH_EXTRAS" | sed 's/:/\n/g')); do
       if [ -d $pth ]; then
           pth=$(realpath "$pth")
-          echo ":${PATHS}:" | grep --quiet ":${pth}:" || {
+          echo ":${PATHS}:" | grep -q ":${pth}:" || {
               if [ -z "$PATHS" ]; then
                   PATHS="$pth";
               else

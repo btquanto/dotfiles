@@ -23,7 +23,7 @@ path_add () {
   for pth in $(echo $(echo "$PATH:$path_extras" | sed 's/:/\n/g')); do
       if [ -d $pth ]; then
           pth=$(realpath "$pth")
-          echo ":${paths}:" | grep --quiet ":${pth}:" || {
+          echo ":${paths}:" | grep -q ":${pth}:" || {
               if [ -z "$paths" ]; then
                   paths="$pth";
               else
