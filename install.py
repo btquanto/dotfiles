@@ -6,12 +6,25 @@ Install dotfiles.
 import os
 import shutil
 from datetime import datetime
-from subprocess import call as subprocess_call
+from subprocess import call as subprocess_call, check_output
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 HOME_DIR=os.environ.get("HOME")
 
 os.chdir(ROOT_PATH)
+
+def get_git_config(field):
+    """Gets the current Git user."""
+    command = ["git", "config", field]
+    try:
+        output = check_output(command)
+        output = output.decode("utf-8").strip()
+    except:
+        return ""
+    return output
+
+GIT_USER = get_git_config("user.name")
+GIT_EMAIL = get_git_config("user.email")
 
 def copy(src, dest):
     """
@@ -58,5 +71,9 @@ def main():
         copy(file_path, home_path)
 
 if __name__ == "__main__":
+    GIT_USER = get_git_config("user.name")
+    GIT_EMAIL = get_git_config("user.email")
     main()
-    subprocess_call([os.environ.get("SHELL", "bash"), "-lc", ":"])
+    env = dict(**os.environ)
+    env.update(dict(GIT_USER=GIT_USER, GIT_EMAIL=GIT_EMAIL))
+    subprocess_call([os.environ.get("SHELL", "bash"), "-lc", "exit"], env=env, shell=True)

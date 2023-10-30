@@ -4,7 +4,7 @@ This is intended for my personal use. If you want to use it, follow the followin
 This works in **Pop! OS 22.04**. I don't guarantee other operating systems. It generally would work fine in **bash** and **zsh** shell
 
 1. The templates for the dotfiles are in the folders `dotfiles` and `modules`. Edit them as fit.
-2. Run `install.sh` and follow the instructions
+2. Run `install.py` and follow the instructions
 
 # Install
 
@@ -15,7 +15,7 @@ Debian dependencies
 Copy and paste for the lazy me:
 
     git clone https://github.com/btquanto/dotfiles.git
-    ./dotfiles/install.sh
+    ./dotfiles/install.py
 
 # Some optional tools you may want to install
 

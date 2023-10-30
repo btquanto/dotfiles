@@ -101,14 +101,18 @@ path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
 type git 2>&1 >/dev/null && {
     git config --global --get user.name 2>&1 >/dev/null;
     if [[ $(git config --global --get user.name) == "" ]]; then
-        printf "Git user: ";
-        read -r GIT_USER;
+        if [[ "$GIT_USER" == "" ]]; then
+            printf "Git user: ";
+            read -r GIT_USER;
+        fi
         git config --global user.name "$GIT_USER";
         unset GIT_USER;
     fi
     if [[ $(git config --global --get user.email) == "" ]]; then
-        printf "Git email: ";
-        read GIT_EMAIL;
+        if [[ "$GIT_EMAIL" == "" ]]; then
+            printf "Git email: ";
+            read -r GIT_EMAIL;
+        fi
         git config --global user.email "$GIT_EMAIL";
         unset GIT_EMAIL;
     fi
