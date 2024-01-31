@@ -1,9 +1,6 @@
 # Determine current shell type
 [[ "$_SHELL" != "zsh" ]] && _SHELL="bash"
 
-# If not running interactively, don't do anything
-[ -z "$PS1" ] && return
-
 # Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
@@ -35,6 +32,24 @@ fi
 
 # Pre-defined functions
 [ -f ~/.shell/scripts/utilities.sh ] && source ~/.shell/scripts/utilities.sh;
+
+# Add extra paths
+path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
+
+# If not running interactively, don't do anything else
+[ -z "$PS1" ] && return
+
+# # Enforcing LANG=en_US.UTF-8
+# if [ -z `locale | grep -i "LANG=en_US\.UTF-8"` ]; then
+#     if groups | grep "\<sudo\>" &> /dev/null; then
+#         echo "sudo locale-gen en_US.UTF-8";
+#         sudo locale-gen en_US.UTF-8;
+#         echo "sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8";
+#         sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+#     fi
+# fi
+
+# export LANG=en_US.UTF-8;
 
 # Common variables
 
@@ -81,21 +96,6 @@ if [ -f "/usr/bin/ssh-add" ]; then
     fi
   fi
 fi
-
-# # Enforcing LANG=en_US.UTF-8
-# if [ -z `locale | grep -i "LANG=en_US\.UTF-8"` ]; then
-#     if groups | grep "\<sudo\>" &> /dev/null; then
-#         echo "sudo locale-gen en_US.UTF-8";
-#         sudo locale-gen en_US.UTF-8;
-#         echo "sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8";
-#         sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-#     fi
-# fi
-
-# export LANG=en_US.UTF-8;
-
-# Extra paths
-path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
 
 # Configure git user and email if not available
 type git 2>&1 >/dev/null && {
