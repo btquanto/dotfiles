@@ -58,6 +58,8 @@ export SAVEHIST=$HISTSIZE;
 export HISTFILESIZE=10000;
 export HISTFILE="$HOME/.cache/history";
 
+mkdir -p "$HOME/.cache";
+
 # Specific shell configurations
 [ -f ~/.shell/bash_config ] && source ~/.shell/bash_config;
 [ -f ~/.shell/zsh_config ] && source ~/.shell/zsh_config;
