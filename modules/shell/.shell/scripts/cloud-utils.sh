@@ -10,9 +10,7 @@ alias gcs='gcloud compute ssh'
 alias gcsl='gcloud compute services list'
 
 # GCP project management
-alias gcp='gcloud config get-value project'
-alias gcps='gcloud config set project'
-alias gcpl='gcloud projects list'
+alias gcplist='gcloud projects list'
 
 # GCP authentication
 alias gcauth='gcloud auth login --update-adc'
@@ -33,45 +31,31 @@ alias gcconf='gcloud config list'
 alias gcconfl='gcloud config configurations list'
 alias gcconfa='gcloud config configurations activate'
 
+gcprj() {
+  if [ -z "$1" ]; then
+    gcloud config get-value project
+    return $?
+  fi
+  gcloud config set project "$*"
+}
+
+
 # =============================================================================
 # Kubernetes (K8s) Aliases
 # =============================================================================
 
 # kubectl shortcuts
-alias k='kubectl'
-alias kc='kubectl'
-
-# Get resources
-alias kg='kubectl get'
-alias kgp='kubectl get pods'
-alias kgpa='kubectl get pods --all-namespaces'
-alias kgs='kubectl get svc'
-alias kgsa='kubectl get svc --all-namespaces'
-alias kgd='kubectl get deployments'
-alias kgda='kubectl get deployments --all-namespaces'
-alias kgn='kubectl get nodes'
-alias kgns='kubectl get namespaces'
-alias kgi='kubectl get ingress'
+alias kctl='kubectl'
+alias kget='kubectl get'
 
 # Describe resources
-alias kd='kubectl describe'
-alias kdp='kubectl describe pod'
-alias kds='kubectl describe service'
-alias kdd='kubectl describe deployment'
+alias kdesc='kubectl describe'
 
 # Logs
-alias kl='kubectl logs'
-alias klf='kubectl logs -f'
-alias klp='kubectl logs -p'  # previous container logs
+alias klog='kubectl logs'
 
 # Execute commands in pods
-alias ke='kubectl exec -it'
-alias keti='kubectl exec -ti'
-
-# Apply and delete
-alias ka='kubectl apply -f'
-alias kdel='kubectl delete'
-alias kdelf='kubectl delete -f'
+alias kexec='kubectl exec -it'
 
 # Context and namespace management
 alias kx='kubectl config current-context'
@@ -149,33 +133,10 @@ alias ghauth='gh auth login'
 alias ghauthl='gh auth status'
 
 # =============================================================================
-# Git Aliases (bonus since you work with GitHub)
+# Git Aliases
 # =============================================================================
 
-# Basic git shortcuts
-alias g='git'
-alias gs='git status'
-alias ga='git add'
-alias gaa='git add .'
-alias gc='git commit'
-alias gcm='git commit -m'
-alias gp='git push'
-alias gpl='git pull'
-alias gf='git fetch'
-alias gco='git checkout'
-alias gcb='git checkout -b'
-alias gb='git branch'
-alias gba='git branch -a'
-alias gd='git diff'
-alias gl='git log'
-alias glo='git log --oneline'
 alias glog='git log --graph --oneline --decorate'
-alias gst='git stash'
-alias gstp='git stash pop'
-alias gm='git merge'
-alias gr='git rebase'
-alias grs='git reset'
-alias grh='git reset --hard'
 
 # =============================================================================
 # Combined/Workflow Aliases
