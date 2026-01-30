@@ -61,8 +61,8 @@ export HISTFILE="$HOME/.cache/history";
 mkdir -p "$HOME/.cache";
 
 # Specific shell configurations
-[ -f ~/.shell/bash_config ] && source ~/.shell/bash_config;
-[ -f ~/.shell/zsh_config ] && source ~/.shell/zsh_config;
+[ -f ~/.shell/bash_config.sh ] && source ~/.shell/bash_config.sh;
+[ -f ~/.shell/zsh_config.sh ] && source ~/.shell/zsh_config.sh;
 
 # Unset variables
 unset color_prompt force_color_prompt
