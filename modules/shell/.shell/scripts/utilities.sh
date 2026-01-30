@@ -1,6 +1,7 @@
 source ~/.shell/scripts/tmux.sh;
 source ~/.shell/scripts/docker.sh;
 source ~/.shell/scripts/alias.sh;
+source ~/.shell/scripts/google.sh;
 
 [[ $_SHELL == "bash" ]] && source ~/.shell/scripts/git-prompt.sh;
 
