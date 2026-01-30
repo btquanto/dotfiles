@@ -5,7 +5,7 @@ if [[ ! "$_SHELL" == "zsh" ]]; then
 fi
 
 bindkey -e
-# zstyle ':completion:*' use-cache on
+zstyle ':completion:*' use-cache on
 zstyle ':completion:*' menu select
 
 setopt HIST_IGNORE_ALL_DUPS
@@ -42,7 +42,6 @@ then
 fi
 
 _prompt() {
-    # echo "$extra_style%B%F{magenta}[%j] %F{white}%D{%H:%M} $host_color%n@%m %F{blue}%1~ %#%f%b%s "
     echo "$extra_style%B$host_color%n@%m%f:%F{blue}%~%b$(_vcs_info_ps1)%f\$ ";
 }
 export PS1='$(_prompt)';
@@ -52,22 +51,11 @@ zmodload zsh/complist
 compinit
 _comp_options+=(globdots)                           # Include hidden files.
 
-bindkey "^[[3~"   delete-char                       # Delete
-bindkey "^[OH"    beginning-of-line
-bindkey "^[[H"    beginning-of-line                 # Home
-bindkey "^[[1~"   beginning-of-line
-bindkey "^[[1;6D" beginning-of-line                 # Ctrl + Shift + Arrow_Left
-bindkey "^[[4~"   end-of-line
-bindkey "^[[F"    end-of-line                       # End
-bindkey "^[OF"    end-of-line
-bindkey "^[[1;6C" end-of-line                       # Ctrl + Shift + Arrow_Right
-bindkey "^[[1;5D" backward-word                     # Ctrl + Arrow_Left
-bindkey "^[[1;5C" forward-word                      # Ctrl + Arrow_Right
-bindkey "^[[D"    backward-char                     # Arrow_Left
-bindkey "^[[C"    forward-char                      # Arrow_Right
-bindkey -s "^O"         'lf\n'                      # Ctrl + O
-bindkey -s "^[^O"       'open .\n'                  # Ctrl + Alt + O
-
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 2>/dev/null
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
-source /usr/share/autojump/autojump.zsh 2>/dev/null
+bindkey "^[[3~"   delete-char                       # Delete key
+bindkey "^[[H"    beginning-of-line                 # Home key
+bindkey "^[[1;6D" beginning-of-line                 # Ctrl + Shift + Left Arrow (move to beginning of line)
+bindkey "^[[F"    end-of-line                       # End key
+bindkey "^[[1;6C" end-of-line                       # Ctrl + Shift + Right Arrow (move to end of line)
+bindkey "\e[1;9D" backward-word                     # Alt/Option + Left Arrow (move backward by word)
+bindkey "\e[1;9C" forward-word                      # Alt/Option + Right Arrow (move forward by word)
+bindkey -s "^O"         'lf\n'                      # Ctrl + O (open 'lf' file manager)

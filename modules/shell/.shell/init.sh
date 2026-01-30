@@ -31,7 +31,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 # Pre-defined functions
-[ -f ~/.shell/scripts/utilities.sh ] && source ~/.shell/scripts/utilities.sh;
+source ~/.shell/scripts/utilities.sh;
 
 # Add extra paths
 path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
