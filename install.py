@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# pylint: disable=bare-except
+# ruff: noqa: E722
+
 """
 Install dotfiles.
 """
@@ -22,9 +25,6 @@ def get_git_config(field):
     except:
         return ""
     return output
-
-GIT_USER = get_git_config("user.name")
-GIT_EMAIL = get_git_config("user.email")
 
 def copy(src, dest):
     """
@@ -73,7 +73,8 @@ def main():
 if __name__ == "__main__":
     GIT_USER = get_git_config("user.name")
     GIT_EMAIL = get_git_config("user.email")
+    GIT_SIGNING_KEY = get_git_config("user.signingkey")
     main()
     env = dict(**os.environ)
-    env.update(dict(GIT_USER=GIT_USER, GIT_EMAIL=GIT_EMAIL))
+    env.update(dict(GIT_USER=GIT_USER, GIT_EMAIL=GIT_EMAIL, GIT_SIGNING_KEY=GIT_SIGNING_KEY))
     subprocess_call([os.environ.get("SHELL", "bash"), "-lc", "exit"], env=env, shell=True)

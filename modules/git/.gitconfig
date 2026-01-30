@@ -1,34 +1,91 @@
+# User Settings
+[user]
+	name =
+	email =
+	signingkey =
+
+# Commit Settings
+[commit]
+	gpgsign = false
+
+# Init Settings
+[init]
+	defaultBranch = main
+
+# Core Settings
+[core]
+	autocrlf = false
+	excludesfile = ~/.gitignore
+	editor = vim
+	pager = vim -c 'set nonumber buftype=nofile' -
+
+# User Interface
 [color]
-    ui = auto
-    diff = false
-    status=auto
-    branch=auto
-    interactive=auto
-[merge]
-	tool = vimdiff
+	ui = auto
+	diff = false
+	status = auto
+	branch = auto
+	interactive = auto
+
+# Diff and Merge Tools
 [diff]
 	tool = vimdiff
-[core]
-    autocrlf = false
-    excludesfile = ~/.gitignore
-    pager = vim -c 'set nonumber buftype=nofile' -
-	editor = vim
-[user]
-	name = 
-	email = 
-[credential]
-	helper = cache --timeout=7200
+	colorMoved = default
+
 [difftool]
 	prompt = false
+
+[merge]
+	tool = vimdiff
+
+# Aliases
 [alias]
 	d = difftool
-[rerere]
-	enabled = true
-[push]
-	default = current
-[pull]
-	default = current
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	lg = log --oneline --graph --decorate
+
+# Branch Behavior
 [branch]
 	autosetuprebase = always
+
+[branch "main"]
+	rebase = true
+
 [branch "master"]
 	rebase = true
+
+# Push and Pull Defaults
+[push]
+	default = current
+	autoSetupRemote = true
+
+[pull]
+	default = current
+	rebase = true
+
+[fetch]
+	prune = true
+
+# Reuse Recorded Resolution
+[rerere]
+	enabled = true
+
+# Credentials
+[credential]
+	helper = cache --timeout=7200
+
+# Git LFS
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+# URL Shortcuts
+[url "git@github.com:"]
+	insteadOf = https://github.com

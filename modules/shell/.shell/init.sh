@@ -101,7 +101,6 @@ fi
 
 # Configure git user and email if not available
 type git 2>&1 >/dev/null && {
-    git config --global --get user.name 2>&1 >/dev/null;
     if [[ $(git config --global --get user.name) == "" ]]; then
         if [[ "$GIT_USER" == "" ]]; then
             printf "Git user: ";
@@ -110,6 +109,7 @@ type git 2>&1 >/dev/null && {
         git config --global user.name "$GIT_USER";
         unset GIT_USER;
     fi
+
     if [[ $(git config --global --get user.email) == "" ]]; then
         if [[ "$GIT_EMAIL" == "" ]]; then
             printf "Git email: ";
@@ -117,5 +117,14 @@ type git 2>&1 >/dev/null && {
         fi
         git config --global user.email "$GIT_EMAIL";
         unset GIT_EMAIL;
+    fi
+
+    if [[ -n "$GIT_SIGNING_KEY" ]]; then
+        # set signing key only when not set globally
+        if [[ $(git config --global --get user.signingkey) == "" ]]; then
+            git config --global user.signingkey "$GIT_SIGNING_KEY";
+            git config --global commit.gpgsign true;
+        fi
+        unset GIT_SIGNING_KEY;
     fi
 }
