@@ -119,8 +119,4 @@ shopt -s checkwinsize
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-function _handle_exit() {
-    history -a
-}
-
-trap _handle_exit EXIT;
+trap 'history -a' EXIT;
