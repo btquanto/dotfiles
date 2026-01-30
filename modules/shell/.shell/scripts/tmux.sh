@@ -1,9 +1,9 @@
 function mux() {
-    if [ $# -eq 0 ]
-    then
-        session=$USER
+    session=${1:-$USER}
+
+    if tmux has -t $session 2>/dev/null; then
+        tmux attach -t $session
     else
-        session=$1
+        tmux new -s $session
     fi
-    (tmux has -t $session && tmux attach -t $session) || tmux new -s $session;
 }

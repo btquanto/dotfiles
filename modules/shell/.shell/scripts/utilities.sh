@@ -1,14 +1,14 @@
 source ~/.shell/scripts/tmux.sh;
-source ~/.shell/scripts/proxy.sh;
 source ~/.shell/scripts/docker.sh;
 source ~/.shell/scripts/alias.sh;
 
 [[ $_SHELL == "bash" ]] && source ~/.shell/scripts/git-prompt.sh;
 
 function line() {
-    _line=$1
-    _file=$2
-     sed -n "${_line},${_line}p;${_line}q" $_file
+    # Extract a specific line from a file
+    line_number=$1
+    file_path=$2
+    sed -n "${line_number},${line_number}p;${line_number}q" "$file_path"
 }
 
 function pipv() {
@@ -39,9 +39,8 @@ function dirdiff() {
     done
 }
 
-#
-# # ex - archive extractor
-# # usage: ex <file>
+# extract - archive extractor
+# usage: extract <file>
 function extract () {
   if [ -f $1 ] ; then
     case $1 in
@@ -65,22 +64,25 @@ function extract () {
 }
 
 function path_add () {
-  # Extra paths
-  # PATH_EXTRAS="/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin"
-  PATH_EXTRAS="$1"
-  PATHS=""
-  for pth in $(echo $(echo "$PATH:$PATH_EXTRAS" | sed 's/:/\n/g')); do
-      if [ -d $pth ]; then
+  # Add extra paths to the PATH environment variable
+  local PATH_EXTRAS="$1"
+  local PATHS=()
+  
+  # Split PATH and PATH_EXTRAS into individual paths
+  IFS=':' ALL_PATHS=($PATH:$PATH_EXTRAS)
+  
+  for pth in "${ALL_PATHS[@]}"; do
+      if [ -d "$pth" ]; then
           pth=$(realpath "$pth")
-          echo ":${PATHS}:" | grep -q ":${pth}:" || {
-              if [ -z "$PATHS" ]; then
-                  PATHS="$pth";
-              else
-                  PATHS="${PATHS}:${pth}";
-              fi
-          }
+          # Add path if not already in PATHS
+          if [[ ! " ${PATHS[*]} " =~ " $pth " ]]; then
+              PATHS+=("$pth")
+          fi
       fi
   done
 
-  export PATH="$PATHS";
+  # Only update PATH if there are valid paths
+  if [ ${#PATHS[@]} -gt 0 ]; then
+      export PATH=$(IFS=:; echo "${PATHS[*]}")
+  fi
 }

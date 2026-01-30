@@ -1,13 +1,13 @@
 
-test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+if command -v dircolors &> /dev/null; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+fi
 
 # some git aliases
 alias gl="git log --graph --oneline"
 alias gvi="vim -p \`git diff --name-only\`"
 
-alias ls='ls'
 alias ll='ls -l'
-# ls, the common ones I use a lot shortened for rapid fire usage
 alias l='ls -lFh'     #size,show type,human readable
 alias la='ls -lAFh'   #long list,show almost all,show type,human readable
 alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
@@ -22,20 +22,6 @@ alias grep='grep --color'
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS} '
 
 alias t='tail -f'
-
-if [[ $_SHELL == "zsh" ]]; then
-    # Command line head / tail shortcuts
-    alias -g H='| head'
-    alias -g T='| tail'
-    alias -g G='| grep'
-    alias -g L="| less"
-    alias -g M="| most"
-    alias -g LL="2>&1 | less"
-    alias -g CA="2>&1 | cat -A"
-    alias -g NE="2> /dev/null"
-    alias -g NUL="> /dev/null 2>&1"
-    alias -g P="2>&1| pygmentize -l pytb"
-fi
 
 alias dud='du -d 1 -h'
 alias duf='du -sh *'
@@ -54,5 +40,13 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias vi='vim'
 
-alias update-grub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
+# More aliases
 alias memwatch="watch -n 3 free -m"
+
+if command -v grub-mkconfig &> /dev/null; then
+    alias update-grub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
+fi
+
+if [ -x "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]; then
+    alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+fi
