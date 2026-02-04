@@ -2,6 +2,7 @@ source ~/.shell/scripts/tmux.sh;
 source ~/.shell/scripts/docker.sh;
 source ~/.shell/scripts/alias.sh;
 source ~/.shell/scripts/cloud-utils.sh;
+source ~/.shell/scripts/gh.sh;
 
 [[ $_SHELL == "bash" ]] && source ~/.shell/scripts/git-prompt.sh;
 
@@ -86,4 +87,22 @@ function path_add () {
   if [ ${#PATHS[@]} -gt 0 ]; then
       export PATH=$(IFS=:; echo "${PATHS[*]}")
   fi
+}
+
+function update_ssh_key_password() {
+    KEY_FILE="$1"
+
+    if [[ -z "$KEY_FILE" ]]; then
+        echo "Usage: update_ssh_key_password <private_key_file>"
+        return 1
+    fi
+        
+    # Update SSH key password for the specified private key
+    if [[ -f "$KEY_FILE" && ! "$KEY_FILE" =~ \.pub$ ]]; then
+        echo "Updating password for key: $KEY_FILE"
+        ssh-keygen -p -f "$KEY_FILE"
+    else
+        echo "Error: '$KEY_FILE' is not a valid private key file."
+        return 1
+    fi
 }
