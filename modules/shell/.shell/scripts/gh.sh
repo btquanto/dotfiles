@@ -37,3 +37,19 @@ function gh-get-schema() {
   }
   " # | jq -r ".data.__type.fields.[].name"
 }
+
+function gh-get-rate-limit() {
+  gh api graphql -f query='
+    {
+      viewer {
+        login
+      }
+      rateLimit {
+        limit
+        remaining
+        used
+        resetAt
+      }
+    }
+  '
+}
