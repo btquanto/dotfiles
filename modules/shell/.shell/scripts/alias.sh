@@ -50,3 +50,8 @@ fi
 if [ -x "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]; then
     alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 fi
+
+# If python command doesn't exist but python3 does, alias python to python3
+if ! command -v python &> /dev/null && command -v python3 &> /dev/null; then
+    alias python='python3'
+fi
