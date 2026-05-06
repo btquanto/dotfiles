@@ -31,7 +31,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 # Pre-defined functions
-source ~/.shell/scripts/utilities.sh;
+source ~/.sh.d/config.d/utilities.sh;
 
 # Add extra paths
 path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";
@@ -61,8 +61,8 @@ export HISTFILE="$HOME/.cache/history";
 mkdir -p "$HOME/.cache";
 
 # Specific shell configurations
-[ -f ~/.shell/bash_config.sh ] && source ~/.shell/bash_config.sh;
-[ -f ~/.shell/zsh_config.sh ] && source ~/.shell/zsh_config.sh;
+[ -f ~/.sh.d/bash_config.sh ] && source ~/.sh.d/bash_config.sh;
+[ -f ~/.sh.d/zsh_config.sh ] && source ~/.sh.d/zsh_config.sh;
 
 # Unset variables
 unset color_prompt force_color_prompt

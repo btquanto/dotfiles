@@ -2,7 +2,7 @@
 
 _SHELL="bash";
 
-[ -f ~/.shell/init.sh ] && source ~/.shell/init.sh;
+[ -f ~/.sh.d/init.sh ] && source ~/.sh.d/init.sh;
 
 if [ -f ~/.shellrc-local ]; then
     source ~/.shellrc-local;
