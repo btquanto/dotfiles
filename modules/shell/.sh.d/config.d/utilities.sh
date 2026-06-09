@@ -66,26 +66,22 @@ function extract () {
 }
 
 function path_add () {
-  # Add extra paths to the PATH environment variable
   local PATH_EXTRAS="$1"
   local PATHS=()
-  
-  # Split PATH and PATH_EXTRAS into individual paths
-  IFS=':' ALL_PATHS=($PATH:$PATH_EXTRAS)
-  
-  for pth in "${ALL_PATHS[@]}"; do
-      if [ -d "$pth" ]; then
-          pth=$(realpath "$pth")
-          # Add path if not already in PATHS
-          if [[ ! " ${PATHS[*]} " =~ " $pth " ]]; then
-              PATHS+=("$pth")
-          fi
-      fi
-  done
+  local pth
 
-  # Only update PATH if there are valid paths
+  while IFS= read -r pth; do
+    [ -z "$pth" ] && continue
+    if [ -d "$pth" ]; then
+      pth="${pth:A}"
+      if [[ ! " ${PATHS[*]} " =~ " $pth " ]]; then
+        PATHS+=("$pth")
+      fi
+    fi
+  done < <(printf '%s:%s\n' "$PATH" "$PATH_EXTRAS" | tr ':' '\n')
+
   if [ ${#PATHS[@]} -gt 0 ]; then
-      export PATH=$(IFS=:; echo "${PATHS[*]}")
+    export PATH=$(IFS=:; echo "${PATHS[*]}")
   fi
 }
 

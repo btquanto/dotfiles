@@ -77,10 +77,13 @@ export PS1='$(echo "$extra_style%B$host_color%n@%m%f:%F{blue}%~%b$(_vcs_info_ps1
 # =============================================================================
 
 # Enable and configure tab completion
-autoload -U compinit
+autoload -Uz compinit
 zmodload zsh/complist
-# Skip dump file to avoid corruption issues
-compinit -D
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 _comp_options+=(globdots)  # Include hidden files in tab completion
 
 # =============================================================================
