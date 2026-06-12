@@ -26,6 +26,24 @@ def get_git_config(field):
         return ""
     return output
 
+def get_url_insteadof_configs():
+    """
+    Returns a dict of {insteadOf_value: url_prefix} from global git url.*.insteadOf entries.
+    """
+    try:
+        output = check_output(["git", "config", "--global", "--get-regexp", r"url\..*\.insteadOf"])
+        output = output.decode("utf-8").strip()
+    except:
+        return {}
+    result = {}
+    for line in output.splitlines():
+        key, _, value = line.partition(" ")
+        # key is like url.git@github.com:.insteadof — git normalizes key names to lowercase
+        suffix_pos = key.lower().rfind(".insteadof")
+        url_prefix = key[len("url."):suffix_pos]
+        result[value] = url_prefix
+    return result
+
 def copy(src, dest):
     """
     Copy a file or directory to a new location.
@@ -71,7 +89,7 @@ def setup_dotfiles():
         copy(home_path, history_path)
         copy(file_path, home_path)
 
-def setup_gitconfig(user_name=None, user_email=None, signing_key=None):
+def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_insteadof=None):
     """
     Set up Git user configuration.
     """
@@ -156,16 +174,22 @@ def setup_gitconfig(user_name=None, user_email=None, signing_key=None):
     subprocess_call(["git", "config", "--global", "filter.lfs.process", "git-lfs filter-process"])
     subprocess_call(["git", "config", "--global", "filter.lfs.required", "true"])
 
-    # URL shortcuts
-    subprocess_call(["git", "config", "--global", "url.git@github.com:.insteadOf", "https://github.com"])
-    subprocess_call(["git", "config", "--global", "url.git@gitlab.com:.insteadOf", "https://gitlab.com"])
+    # URL shortcuts — defaults first, then restore any previously configured entries
+    defaults = {
+        "https://github.com": "git@github.com:",
+        "https://gitlab.com": "git@gitlab.com:",
+    }
+    merged = {**defaults, **(url_insteadof or {})}
+    for instead_of, url_prefix in merged.items():
+        subprocess_call(["git", "config", "--global", f"url.{url_prefix}.insteadOf", instead_of])
 
 if __name__ == "__main__":
     GIT_USER = get_git_config("user.name")
     GIT_EMAIL = get_git_config("user.email")
     GIT_SIGNING_KEY = get_git_config("user.signingkey")
+    URL_INSTEADOF = get_url_insteadof_configs()
     setup_dotfiles()
-    setup_gitconfig(user_name=GIT_USER, user_email=GIT_EMAIL, signing_key=GIT_SIGNING_KEY)
+    setup_gitconfig(user_name=GIT_USER, user_email=GIT_EMAIL, signing_key=GIT_SIGNING_KEY, url_insteadof=URL_INSTEADOF)
     print(
         "\nDotfiles installed successfully!"
         "\nGit config updated."
