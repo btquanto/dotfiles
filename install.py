@@ -120,7 +120,9 @@ def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_inste
     subprocess_call(["git", "config", "--global", "core.excludesfile", "~/.gitignore"])
     subprocess_call(["git", "config", "--global", "core.pager", "vim -c 'set nonumber buftype=nofile' -"])
 
-    if shutil.which("nvim"):
+    if shutil.which("fresh"):
+        subprocess_call(["git", "config", "--global", "core.editor", "fresh"])
+    elif shutil.which("nvim"):
         subprocess_call(["git", "config", "--global", "core.editor", "nvim"])
     elif shutil.which("vim"):
         subprocess_call(["git", "config", "--global", "core.editor", "vim"])
