@@ -1,11 +1,3 @@
-source ~/.sh.d/config.d/tmux.sh;
-source ~/.sh.d/config.d/docker.sh;
-source ~/.sh.d/config.d/alias.sh;
-source ~/.sh.d/config.d/cloud-utils.sh;
-source ~/.sh.d/config.d/gh.sh;
-
-[[ $_SHELL == "bash" ]] && source ~/.sh.d/config.d/git-prompt.sh;
-
 function line() {
     # Extract a specific line from a file
     line_number=$1

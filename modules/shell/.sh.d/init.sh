@@ -30,8 +30,36 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-# Pre-defined functions
-source ~/.sh.d/config.d/utilities.sh;
+# Extra configuration files
+# 1. Dynamically get the directory where THIS script lives
+# (Works for both Bash and Zsh)
+if [ -n "$BASH_VERSION" ]; then
+    CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "$ZSH_VERSION" ]; then
+    CONFIG_DIR="$(cd "$(dirname "${(%):-%x}")" && pwd)"
+else
+    # Fallback if executing in a basic sh environment
+    CONFIG_DIR="$HOME/.sh.d"
+fi
+
+CONFIG_DIR="$CONFIG_DIR/config.d"
+
+# 2. Automatically loop through and source all .sh files in this directory
+for config_file in "$CONFIG_DIR"/*.sh; do
+    # Ensure the file exists and is readable (handles empty directory case)
+    if [ -r "$config_file" ] && [ "$config_file" != "${(%):-%x}" ]; then
+        
+        # Specific rule: Skip git-prompt.sh if the shell is not bash
+        if [[ "$config_file" == *"git-prompt.sh" ]] && [[ "$_SHELL" != "bash" ]]; then
+            continue
+        fi
+
+        source "$config_file"
+    fi
+done
+
+# Clean up the variable so it doesn't clutter your environment
+unset CONFIG_DIR
 
 # Add extra paths
 path_add "/sbin:/usr/sbin:/usr/local/sbin:$HOME/bin:$HOME/.local/bin";

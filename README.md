@@ -1,14 +1,14 @@
 # Intro
 
 This is intended for my personal use. If you want to use it, follow the following steps.
-This works in **Pop! OS 22.04**. I don't guarantee other operating systems. It generally would work fine in **bash** and **zsh** shell
+This should generally works well in **bash** and **zsh**. I've been switching between different OS'es, including Debian based distros, Fedora, and MacOS and been fixing anything that doesn't work.
 
 1. The templates for the dotfiles are in the folders `dotfiles` and `modules`. Edit them as fit.
 2. Run `install.py` and follow the instructions
 
 # Install
 
-Debian dependencies
+Debian dependencies (if you use zsh)
 
     sudo apt install zsh-syntax-highlighting autojump zsh-autosuggestions
 
@@ -22,11 +22,25 @@ Copy and paste for the lazy me:
 ## `lf` Terminal File Manager
 
 ```
-wget https://github.com/gokcehan/lf/releases/download/r27/lf-linux-amd64.tar.gz
+# Fetch the latest release version tag from GitHub API
+VERSION=$(curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | jq -r '.tag_name')
+
+# Check if VERSION was successfully retrieved
+if [ -z "$VERSION" ] || [ "$VERSION" == "null" ]; then
+    echo "Error: Failed to fetch the latest version from GitHub."
+    exit 1
+fi
+
+echo "Latest version found: $VERSION"
+
+# Download, extract, and install
+wget "https://github.com/gokcehan/lf/releases/download/$VERSION/lf-linux-amd64.tar.gz"
 tar -xvf lf-linux-amd64.tar.gz
 chmod +x lf
 sudo mv lf /usr/bin/lf
 rm lf-linux-amd64.tar.gz
+
+echo "lf has been successfully installed/updated to $VERSION!"
 ```
 
 ## `nala` an alternative to `apt` package manager
