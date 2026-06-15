@@ -43,10 +43,6 @@ rm lf-linux-amd64.tar.gz
 echo "lf has been successfully installed/updated to $VERSION!"
 ```
 
-## `nala` an alternative to `apt` package manager
-
-Follow [nala's installation instructions on its wiki](https://gitlab.com/volian/nala/-/wikis/Installation)
-
 ## `homebrew` [a better package manager](https://brew.sh/)
 
 ```
@@ -70,18 +66,6 @@ curl https://pyenv.run | bash
 Local configuration should be put in `~/.shellrc-local`. Do not put local configuration in `.shell` folder. It will be deleted after install script runs.
 
 ```bash
-apt() {
-  command nala "$@"
-}
-
-sudo() {
-  if [ "$1" = "apt" ]; then
-    shift
-    command sudo nala "$@"
-  else
-    command sudo "$@"
-  fi
-}
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
