@@ -156,21 +156,3 @@ type git 2>&1 >/dev/null && {
         unset GIT_SIGNING_KEY;
     fi
 }
-
-_load_nvm() {
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-}
-
-# Define the list of commands that should trigger NVM to load
-_nvm_commands=('nvm' 'node' 'npm' 'npx')
-
-# Dynamically create placeholder functions
-for cmd in "${_nvm_commands[@]}"; do
-    eval "$cmd() {
-        unset -f ${_nvm_commands[*]}
-        _load_nvm
-        $cmd \"\$@\"
-    }"
-done
