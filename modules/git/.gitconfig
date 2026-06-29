@@ -1,8 +1,8 @@
 # User Settings
 [user]
-	name =
-	email =
-	signingkey =
+	name = Quan To
+	email = btquanto@gmail.com
+	signingkey = ~/.ssh/id_ed25519
 
 # Commit Settings
 [commit]
@@ -89,3 +89,5 @@
 # URL Shortcuts
 [url "git@github.com:"]
 	insteadOf = https://github.com
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com

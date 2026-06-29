@@ -5,11 +5,7 @@ _LOCAL_CONFIG="$HOME/.local/shrc.sh";
 
 [ -f ~/.sh.d/init.sh ] && source ~/.sh.d/init.sh;
 
-if [ -f "$_LOCAL_CONFIG" ]; then
-    source "$_LOCAL_CONFIG";
-else
-    touch "$_LOCAL_CONFIG";
-fi
+test -f "$_LOCAL_CONFIG" && source "$_LOCAL_CONFIG" || touch "$_LOCAL_CONFIG";
 
 # Define the list of commands that should trigger NVM to load
 _nvm_commands=(${NVM_COMMANDS:-nvm node npm npx})
