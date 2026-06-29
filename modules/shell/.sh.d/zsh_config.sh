@@ -86,9 +86,6 @@ else
 fi
 _comp_options+=(globdots)  # Include hidden files in tab completion
 
-# Source git completion for zsh if available (from git contrib)
-[ -f ~/.sh.d/config.d/91-git-completion.zsh ] && source ~/.sh.d/config.d/91-git-completion.zsh
-
 # =============================================================================
 # Key Bindings
 # =============================================================================

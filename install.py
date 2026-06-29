@@ -140,8 +140,8 @@ def download_git_scripts():
     )
     _download(
         f"{base}/git-prompt.sh",
-        os.path.join(config_d, "92-git-prompt.sh"),
-        "git-prompt.sh",
+        os.path.join(config_d, "92-git-prompt.bash"),
+        "git-prompt.bash",
     )
 
 

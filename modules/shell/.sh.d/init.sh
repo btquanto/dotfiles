@@ -46,19 +46,23 @@ fi
 
 CONFIG_DIR="$CONFIG_DIR/config.d"
 
-# 2. Automatically loop through and source all .sh files in this directory
+# 2. Source all shell-agnostic .sh files
 for config_file in "$CONFIG_DIR"/*.sh; do
-    # Ensure the file exists and is readable (handles empty directory case)
     if [ -r "$config_file" ] && [ "$config_file" != "$__SELF" ]; then
-        
-        # Specific rule: Skip git-prompt.sh if the shell is not bash
-        if [[ "$config_file" == *"git-prompt.sh" ]] && [[ "$_SHELL" != "bash" ]]; then
-            continue
-        fi
-
         source "$config_file"
     fi
 done
+
+# 3. Source shell-specific files
+if [ "$_SHELL" = "bash" ]; then
+    for config_file in "$CONFIG_DIR"/*.bash; do
+        [ -r "$config_file" ] && source "$config_file"
+    done
+elif [ "$_SHELL" = "zsh" ]; then
+    for config_file in "$CONFIG_DIR"/*.zsh; do
+        [ -r "$config_file" ] && source "$config_file"
+    done
+fi
 
 # Clean up the variable so it doesn't clutter your environment
 unset CONFIG_DIR
