@@ -112,18 +112,37 @@ def setup_dotfiles():
         link_file(src, dest)
 
 
-def download_git_completion():
-    url = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
-    dest = os.path.join(HOME_DIR, ".sh.d", "config.d", "05-git-completion.bash")
+def _download(url, dest, name):
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     try:
         from urllib.request import urlopen
         response = urlopen(url)
         with open(dest, "wb") as f:
             f.write(response.read())
-        print("Downloaded git-completion.bash")
+        print("Downloaded " + name)
     except Exception as e:
-        print(f"Warning: could not download git-completion.bash: {e}")
+        print(f"Warning: could not download {name}: {e}")
+
+
+def download_git_scripts():
+    base = "https://raw.githubusercontent.com/git/git/master/contrib/completion"
+    config_d = os.path.join(HOME_DIR, ".sh.d", "config.d")
+
+    _download(
+        f"{base}/git-completion.bash",
+        os.path.join(config_d, "05-git-completion.bash"),
+        "git-completion.bash",
+    )
+    _download(
+        f"{base}/git-completion.zsh",
+        os.path.join(config_d, "04-git-completion.zsh"),
+        "git-completion.zsh",
+    )
+    _download(
+        f"{base}/git-prompt.sh",
+        os.path.join(config_d, "99-git-prompt.sh"),
+        "git-prompt.sh",
+    )
 
 
 def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_insteadof=None):
@@ -243,7 +262,7 @@ if __name__ == "__main__":
     GIT_SIGNING_KEY = get_git_config("user.signingkey")
     URL_INSTEADOF = get_url_insteadof_configs()
     setup_dotfiles()
-    download_git_completion()
+    download_git_scripts()
     setup_gitconfig(user_name=GIT_USER, user_email=GIT_EMAIL, signing_key=GIT_SIGNING_KEY, url_insteadof=URL_INSTEADOF)
     print(
         "\nDotfiles installed successfully!"

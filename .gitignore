@@ -1,2 +1,3 @@
 config.json
-modules/shell/.sh.d/config.d/05-git-completion.bash
+modules/shell/.sh.d/config.d/0*-git-*
+modules/shell/.sh.d/config.d/99-git-prompt.sh
