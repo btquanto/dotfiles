@@ -1,13 +1,14 @@
 #!/bin/sh
 
 _SHELL="zsh";
+_LOCAL_CONFIG="$HOME/.local/shrc.sh";
 
 [ -f ~/.sh.d/init.sh ] && source ~/.sh.d/init.sh;
 
-if [ -f ~/.shellrc-local ]; then
-    source ~/.shellrc-local;
+if [ -f "$_LOCAL_CONFIG" ]; then
+    source "$_LOCAL_CONFIG";
 else
-    touch ~/.shellrc-local;
+    touch "$_LOCAL_CONFIG";
 fi
 
 # Define the list of commands that should trigger NVM to load

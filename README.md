@@ -63,7 +63,7 @@ curl https://pyenv.run | bash
 
 # Local configuration
 
-Local configuration should be put in `~/.shellrc-local`. Do not put local configuration in `.shell` folder. It will be deleted after install script runs.
+Local configuration should be put in `~/.local/shrc.sh`. Do not put local configuration in `.shell` folder. It will be deleted after install script runs.
 
 ```bash
 
