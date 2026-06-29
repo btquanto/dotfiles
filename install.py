@@ -130,17 +130,17 @@ def download_git_scripts():
 
     _download(
         f"{base}/git-completion.bash",
-        os.path.join(config_d, "05-git-completion.bash"),
+        os.path.join(config_d, "900-git-completion.bash"),
         "git-completion.bash",
     )
     _download(
         f"{base}/git-completion.zsh",
-        os.path.join(config_d, "04-git-completion.zsh"),
+        os.path.join(config_d, "901-git-completion.zsh"),
         "git-completion.zsh",
     )
     _download(
         f"{base}/git-prompt.sh",
-        os.path.join(config_d, "99-git-prompt.sh"),
+        os.path.join(config_d, "902-git-prompt.sh"),
         "git-prompt.sh",
     )
 
