@@ -1,85 +1,62 @@
-# Intro
+# Dotfiles
 
-This is intended for my personal use. If you want to use it, follow the following steps.
-This should generally works well in **bash** and **zsh**. I've been switching between different OS'es, including Debian based distros, Fedora, and MacOS and been fixing anything that doesn't work.
+Personal dotfiles that work across **bash**, **zsh**, **Debian-based distros**, **Fedora**, and **macOS**.
 
-1. The templates for the dotfiles are in the folders `dotfiles` and `modules`. Edit them as fit.
-2. Run `install.py` and follow the instructions
-
-# Install
-
-Debian dependencies (if you use zsh)
-
-    sudo apt install zsh-syntax-highlighting autojump zsh-autosuggestions
-
-Copy and paste for the lazy me:
-
-    git clone https://github.com/btquanto/dotfiles.git
-    ./dotfiles/install.py
-
-# Some optional tools you may want to install
-
-## `lf` Terminal File Manager
+## Structure
 
 ```
-# Fetch the latest release version tag from GitHub API
-VERSION=$(curl -s https://api.github.com/repos/gokcehan/lf/releases/latest | jq -r '.tag_name')
-
-# Check if VERSION was successfully retrieved
-if [ -z "$VERSION" ] || [ "$VERSION" == "null" ]; then
-    echo "Error: Failed to fetch the latest version from GitHub."
-    exit 1
-fi
-
-echo "Latest version found: $VERSION"
-
-# Download, extract, and install
-wget "https://github.com/gokcehan/lf/releases/download/$VERSION/lf-linux-amd64.tar.gz"
-tar -xvf lf-linux-amd64.tar.gz
-chmod +x lf
-sudo mv lf /usr/bin/lf
-rm lf-linux-amd64.tar.gz
-
-echo "lf has been successfully installed/updated to $VERSION!"
+dotfiles/     → $HOME/       (core shell configs)
+modules/      → $HOME/       (app-specific configs)
+configs/      → $HOME/.config/ (XDG-compliant configs)
+history/      → $HOME/       (timestamped backups from install.py)
 ```
 
-## `homebrew` [a better package manager](https://brew.sh/)
-
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-## `nvm` [Node Version Manager](https://github.com/nvm-sh/nvm)
-
-```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-```
-
-## `pyenv` Python version manager
-
-```
-curl https://pyenv.run | bash
-```
-
-# Local configuration
-
-Local configuration should be put in `~/.local/shrc.sh`. Do not put local configuration in `.shell` folder. It will be deleted after install script runs.
+## Install
 
 ```bash
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# Restart your shell for the changes to take effect.
-
-# Load pyenv-virtualenv automatically by adding
-# the following to ~/.bashrc:
-
-eval "$(pyenv virtualenv-init -)"
+git clone https://github.com/btquanto/dotfiles.git
+./dotfiles/install.py
 ```
 
+The installer backs up any existing dotfiles to `history/`, then symlinks/copies the new ones. It also prompts for Git identity and signing key.
+
+Debian dependencies (for zsh features):
+
+```bash
+sudo apt install zsh-syntax-highlighting autojump zsh-autosuggestions
+```
+
+## What's included
+
+| Category | Tools / Configs |
+|---|---|
+| **Shells** | bash, zsh with modular framework (`~/.sh.d/`) |
+| **Editor** | Vim with Pathogen, NERD Tree, wombat256mod |
+| **Terminal** | tmux, screen, lf file manager |
+| **Git** | Aliases, LFS, rerere, signed commits, vimdiff |
+| **Databases** | psql, mysql client config |
+| **Display** | Custom dircolors, colored `ls` |
+| **Cloud/DevOps** | GCP, Kubernetes (kubectl), Docker aliases |
+| **GitHub** | gh CLI, API query utilities |
+| **Shell utils** | Archive extractor, PATH manager, tool installers |
+
+The shell framework auto-sources files from `~/.sh.d/config.d/` in sorted order, then loads shell-specific config via `bash_config.sh` or `zsh_config.sh`. It manages SSH agent, auto-attaches tmux on SSH, and prompts for Git config if missing.
+
+## Local configuration
+
+Put local overrides in `~/.local/shrc.sh` — it won't be overwritten by the installer.
+
+```bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+```
+
+## Optional tools
+
+These installer functions are available after setup:
+
+- `install_lf` — terminal file manager
+- `install_brew` — Homebrew package manager
+- `install_nvm` — Node Version Manager
+- `install_pyenv` — Python version manager
+- `install_uv` — Fast Python package manager
