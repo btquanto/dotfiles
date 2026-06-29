@@ -1,2 +1,2 @@
 config.json
-history
+modules/shell/.sh.d/config.d/05-git-completion.bash

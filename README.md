@@ -5,11 +5,12 @@ Personal dotfiles that work across **bash**, **zsh**, **Debian-based distros**, 
 ## Structure
 
 ```
-dotfiles/     → $HOME/       (core shell configs)
-modules/      → $HOME/       (app-specific configs)
-configs/      → $HOME/.config/ (XDG-compliant configs)
-history/      → $HOME/       (timestamped backups from install.py)
+dotfiles/     → $HOME/        (core shell configs — symlinked)
+modules/      → $HOME/        (app-specific configs — symlinked)
+configs/      → $HOME/.config/ (XDG-compliant configs — symlinked)
 ```
+
+Backups go to `~/.local/backups/dotfiles/<timestamp>/`.
 
 ## Install
 
@@ -18,7 +19,15 @@ git clone https://github.com/btquanto/dotfiles.git
 ./dotfiles/install.py
 ```
 
-The installer backs up any existing dotfiles to `history/`, then symlinks/copies the new ones. It also prompts for Git identity and signing key.
+The installer backs up existing dotfiles to `~/.local/backups/dotfiles/`, then symlinks the new ones into place. It also prompts for Git identity and signing key, and downloads `git-completion.bash`.
+
+## Restore
+
+```bash
+./dotfiles/install.py --restore
+```
+
+Copies files from the latest backup back to `$HOME` (plain copies, not symlinks).
 
 Debian dependencies (for zsh features):
 

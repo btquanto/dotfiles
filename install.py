@@ -8,16 +8,45 @@ Install dotfiles.
 
 import os
 import shutil
+import sys
 from datetime import datetime
 from subprocess import call as subprocess_call, check_output
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-HOME_DIR=os.environ.get("HOME")
+HOME_DIR = os.environ.get("HOME")
 
-os.chdir(ROOT_PATH)
+
+def get_backup_dir():
+    return os.path.join(HOME_DIR, ".local", "backups", "dotfiles")
+
+
+def remove(path):
+    if os.path.islink(path) or os.path.isfile(path):
+        os.remove(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path, ignore_errors=True)
+
+
+def copy(src, dest):
+    if not os.path.isfile(src) and not os.path.isdir(src):
+        return
+    if os.path.isfile(src):
+        remove(dest)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copy2(src, dest)
+    elif os.path.isdir(src):
+        remove(dest)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copytree(src, dest, dirs_exist_ok=True)
+
+
+def link_file(src, dest):
+    remove(dest)
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    os.symlink(os.path.abspath(src), dest)
+
 
 def get_git_config(field):
-    """Gets the current Git user."""
     command = ["git", "config", field]
     try:
         output = check_output(command)
@@ -26,10 +55,8 @@ def get_git_config(field):
         return ""
     return output
 
+
 def get_url_insteadof_configs():
-    """
-    Returns a dict of {insteadOf_value: url_prefix} from global git url.*.insteadOf entries.
-    """
     try:
         output = check_output(["git", "config", "--global", "--get-regexp", r"url\..*\.insteadOf"])
         output = output.decode("utf-8").strip()
@@ -38,62 +65,68 @@ def get_url_insteadof_configs():
     result = {}
     for line in output.splitlines():
         key, _, value = line.partition(" ")
-        # key is like url.git@github.com:.insteadof — git normalizes key names to lowercase
         suffix_pos = key.lower().rfind(".insteadof")
         url_prefix = key[len("url."):suffix_pos]
         result[value] = url_prefix
     return result
 
-def copy(src, dest):
-    """
-    Copy a file or directory to a new location.
-    """
-    if os.path.isfile(src):
-        if os.path.exists(dest):
-            os.remove(dest)
-        shutil.copy(src, dest)
-    elif os.path.isdir(src):
-        shutil.rmtree(dest, ignore_errors=True)
-        shutil.copytree(src, dest, dirs_exist_ok=True)
 
 def setup_dotfiles():
-    """
-    Copy dotfiles, modules, and configs to the home directory.
-    Backs up existing files into a timestamped history directory first.
-    """
     timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    history_dir = os.path.join("history", timestamp)
-    os.makedirs(history_dir, exist_ok=True)
+    backup_dir = os.path.join(get_backup_dir(), timestamp)
 
     for path in os.listdir("dotfiles"):
-        file_path = os.path.join("dotfiles", path)
-        home_path = os.path.join(HOME_DIR, path)
-        history_path = os.path.join(history_dir, path)
-        copy(home_path, history_path)
-        copy(file_path, home_path)
+        src = os.path.join(HOME_DIR, path)
+        dest = os.path.join(backup_dir, path)
+        copy(src, dest)
 
     for module in os.listdir("modules"):
-        module = os.path.join("modules", module)
-        if os.path.isdir(module):
-            for path in os.listdir(module):
-                file_path = os.path.join(module, path)
-                home_path = os.path.join(HOME_DIR, path)
-                history_path = os.path.join(history_dir, path)
-                copy(home_path, history_path)
-                copy(file_path, home_path)
+        module_path = os.path.join("modules", module)
+        if os.path.isdir(module_path):
+            for path in os.listdir(module_path):
+                src = os.path.join(HOME_DIR, path)
+                dest = os.path.join(backup_dir, path)
+                copy(src, dest)
 
     for config in os.listdir("configs"):
-        file_path = os.path.join("configs", config)
-        home_path = os.path.join(HOME_DIR, ".config", config)
-        history_path = os.path.join(history_dir, ".config", config)
-        copy(home_path, history_path)
-        copy(file_path, home_path)
+        src = os.path.join(HOME_DIR, ".config", config)
+        dest = os.path.join(backup_dir, ".config", config)
+        copy(src, dest)
+
+    for path in os.listdir("dotfiles"):
+        src = os.path.join(ROOT_PATH, "dotfiles", path)
+        dest = os.path.join(HOME_DIR, path)
+        link_file(src, dest)
+
+    for module in os.listdir("modules"):
+        module_path = os.path.join("modules", module)
+        if os.path.isdir(module_path):
+            for path in os.listdir(module_path):
+                src = os.path.join(ROOT_PATH, module_path, path)
+                dest = os.path.join(HOME_DIR, path)
+                link_file(src, dest)
+
+    for config in os.listdir("configs"):
+        src = os.path.join(ROOT_PATH, "configs", config)
+        dest = os.path.join(HOME_DIR, ".config", config)
+        link_file(src, dest)
+
+
+def download_git_completion():
+    url = "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+    dest = os.path.join(HOME_DIR, ".sh.d", "config.d", "05-git-completion.bash")
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    try:
+        from urllib.request import urlopen
+        response = urlopen(url)
+        with open(dest, "wb") as f:
+            f.write(response.read())
+        print("Downloaded git-completion.bash")
+    except Exception as e:
+        print(f"Warning: could not download git-completion.bash: {e}")
+
 
 def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_insteadof=None):
-    """
-    Set up Git user configuration.
-    """
-    # User identity — prompt if missing, always write (dotfiles copy blanks the template)
     if not user_name:
         user_name = input("Enter your Git user name: ")
     subprocess_call(["git", "config", "--global", "user.name", user_name])
@@ -109,13 +142,10 @@ def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_inste
     else:
         subprocess_call(["git", "config", "--global", "--unset", "user.signingkey"])
 
-    # Commit settings
     subprocess_call(["git", "config", "--global", "commit.gpgsign", "false"])
 
-    # Init settings
     subprocess_call(["git", "config", "--global", "init.defaultBranch", "main"])
 
-    # Core settings
     subprocess_call(["git", "config", "--global", "core.autocrlf", "false"])
     subprocess_call(["git", "config", "--global", "core.excludesfile", "~/.gitignore"])
     subprocess_call(["git", "config", "--global", "core.pager", "vim -c 'set nonumber buftype=nofile' -"])
@@ -129,20 +159,17 @@ def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_inste
     elif shutil.which("vi"):
         subprocess_call(["git", "config", "--global", "core.editor", "vi"])
 
-    # Color settings
     subprocess_call(["git", "config", "--global", "color.ui", "auto"])
     subprocess_call(["git", "config", "--global", "color.diff", "false"])
     subprocess_call(["git", "config", "--global", "color.status", "auto"])
     subprocess_call(["git", "config", "--global", "color.branch", "auto"])
     subprocess_call(["git", "config", "--global", "color.interactive", "auto"])
 
-    # Diff and merge tools
     subprocess_call(["git", "config", "--global", "diff.tool", "vimdiff"])
     subprocess_call(["git", "config", "--global", "diff.colorMoved", "default"])
     subprocess_call(["git", "config", "--global", "difftool.prompt", "false"])
     subprocess_call(["git", "config", "--global", "merge.tool", "vimdiff"])
 
-    # Aliases
     subprocess_call(["git", "config", "--global", "alias.d", "difftool"])
     subprocess_call(["git", "config", "--global", "alias.co", "checkout"])
     subprocess_call(["git", "config", "--global", "alias.br", "branch"])
@@ -152,31 +179,25 @@ def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_inste
     subprocess_call(["git", "config", "--global", "alias.last", "log -1 HEAD"])
     subprocess_call(["git", "config", "--global", "alias.lg", "log --oneline --graph --decorate"])
 
-    # Branch behavior
     subprocess_call(["git", "config", "--global", "branch.autosetuprebase", "always"])
     subprocess_call(["git", "config", "--global", "branch.main.rebase", "true"])
     subprocess_call(["git", "config", "--global", "branch.master.rebase", "true"])
 
-    # Push and pull defaults
     subprocess_call(["git", "config", "--global", "push.default", "current"])
     subprocess_call(["git", "config", "--global", "push.autoSetupRemote", "true"])
     subprocess_call(["git", "config", "--global", "pull.default", "current"])
     subprocess_call(["git", "config", "--global", "pull.rebase", "true"])
     subprocess_call(["git", "config", "--global", "fetch.prune", "true"])
 
-    # Reuse recorded resolution
     subprocess_call(["git", "config", "--global", "rerere.enabled", "true"])
 
-    # Credentials
     subprocess_call(["git", "config", "--global", "credential.helper", "cache --timeout=7200"])
 
-    # Git LFS
     subprocess_call(["git", "config", "--global", "filter.lfs.clean", "git-lfs clean -- %f"])
     subprocess_call(["git", "config", "--global", "filter.lfs.smudge", "git-lfs smudge -- %f"])
     subprocess_call(["git", "config", "--global", "filter.lfs.process", "git-lfs filter-process"])
     subprocess_call(["git", "config", "--global", "filter.lfs.required", "true"])
 
-    # URL shortcuts — defaults first, then restore any previously configured entries
     defaults = {
         "https://github.com": "git@github.com:",
         "https://gitlab.com": "git@gitlab.com:",
@@ -185,12 +206,44 @@ def setup_gitconfig(user_name=None, user_email=None, signing_key=None, url_inste
     for instead_of, url_prefix in merged.items():
         subprocess_call(["git", "config", "--global", f"url.{url_prefix}.insteadOf", instead_of])
 
+
+def find_latest_backup():
+    backup_dir = get_backup_dir()
+    if not os.path.isdir(backup_dir):
+        return None
+    backups = sorted(os.listdir(backup_dir))
+    return os.path.join(backup_dir, backups[-1]) if backups else None
+
+
+def restore():
+    latest = find_latest_backup()
+    if not latest:
+        print("No backups found in {}".format(get_backup_dir()))
+        return
+    for root, dirs, files in os.walk(latest):
+        for f in files:
+            src = os.path.join(root, f)
+            rel_path = os.path.relpath(src, latest)
+            dest = os.path.join(HOME_DIR, rel_path)
+            remove(dest)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.copy2(src, dest)
+    print("Restored from {}".format(latest))
+
+
 if __name__ == "__main__":
+    if "--restore" in sys.argv:
+        restore()
+        sys.exit(0)
+
+    os.chdir(ROOT_PATH)
+
     GIT_USER = get_git_config("user.name")
     GIT_EMAIL = get_git_config("user.email")
     GIT_SIGNING_KEY = get_git_config("user.signingkey")
     URL_INSTEADOF = get_url_insteadof_configs()
     setup_dotfiles()
+    download_git_completion()
     setup_gitconfig(user_name=GIT_USER, user_email=GIT_EMAIL, signing_key=GIT_SIGNING_KEY, url_insteadof=URL_INSTEADOF)
     print(
         "\nDotfiles installed successfully!"
