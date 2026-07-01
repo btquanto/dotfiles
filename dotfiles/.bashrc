@@ -8,9 +8,8 @@ _LOCAL_CONFIG="$HOME/.local/shrc.sh";
 test -f "$_LOCAL_CONFIG" && source "$_LOCAL_CONFIG" || touch "$_LOCAL_CONFIG";
 
 # Define the list of commands that should trigger NVM to load
-_nvm_commands=(${NVM_COMMANDS:-nvm node npm npx})
+_nvm_commands=(${NVM_COMMANDS[@]:-nvm node npm npx})
 
-# Dynamically create placeholder functions
 for cmd in "${_nvm_commands[@]}"; do
     eval "$cmd() {
         unset -f ${_nvm_commands[*]}
